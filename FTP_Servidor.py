@@ -28,7 +28,7 @@ HOST = '172.16.8.13'
 PORT = 21  
 
 threading.current_thread().setName("Server")
-FTP=protocoloTFP('admin','user')
+FTP=protocoloTFP('password','admin')
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as TCPServerSocket:
     TCPServerSocket.bind((HOST, PORT))
     TCPServerSocket.listen()
