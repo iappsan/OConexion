@@ -8,7 +8,7 @@ bufferSize = 1024
 logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-2s) %(message)s',)
 threading.current_thread().setName("Cliente")
 
-HOST = input("Ingresa la IP del servidor: ")
+HOST = '172.16.8.13'
 PORT = 21
 bufferSize = 1024
 passs='admin'

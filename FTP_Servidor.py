@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-2s) %(message)s',
 
 
 def servirPorSiempre(TCPServerSocket,FTP):
-    print("Servidor a la espera de solicitudes")
+    print("Servidoren espera...")
     try:
         while True:
             Client_conn=FTP.server_Connect(TCPServerSocket)
@@ -24,7 +24,7 @@ def servicio(conn):
      FTP.server_SET(conn)
      FTP.server_CLOSE(conn)
  
-HOST = input("Ingresa la IP del servidor: ")
+HOST = '172.16.8.13'
 PORT = 21  
 
 threading.current_thread().setName("Server")

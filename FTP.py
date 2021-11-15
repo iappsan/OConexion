@@ -1,12 +1,10 @@
-import socket
-import threading
 import logging
 from pathlib import Path
 import time
 from os import listdir
 from os.path import isfile, join
 import shutil
-bufferSize = 1024
+BUFFERSIZE = 1024
 logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-2s) %(message)s',)
 
 
@@ -21,15 +19,15 @@ class protocoloTFP(object):
     def cliente_login(self,TCPClientSocket,p,u):
         logging.debug("Enviando comando : Login\n")
         TCPClientSocket.send(str("Login").encode('utf-8'))
-        Mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         if str(Mensaje)=='ok':
             p = input("\nIngrese usuario: ")
             TCPClientSocket.send(str("USER," + p).encode('utf-8'))
-            Mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+            Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
             logging.debug(Mensaje)
-            c = input("\nIngrese Contraseña: ")
+            c = input("\nIngrese Contrasena: ")
             TCPClientSocket.send(str("PASS," + c).encode('utf-8'))
-            Mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+            Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
             if int(Mensaje) == 230:
                 logging.debug('Server ' + Mensaje + " : Usuario conectado")
             else:
@@ -40,15 +38,15 @@ class protocoloTFP(object):
         TCPClientSocket.connect((HOST, PORT))
         logging.debug("Enviando comando : Conect")
         TCPClientSocket.send(str('CONECT').encode('utf-8'))
-        Mensaje= str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        Mensaje= str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug(Mensaje)
 
     def cliente_DIR(self, TCPClientSocket):
         logging.debug("Enviando comando DIR")
         TCPClientSocket.send(str('dir').encode('utf-8'))
-        mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug(mensaje)
-        dir = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        dir = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         time.sleep(1)
         print(dir)
 
@@ -56,7 +54,7 @@ class protocoloTFP(object):
         com = input("\n\nArchivos disponibles:")
         logging.debug("Enviando comando SET")
         TCPClientSocket.send(str('SET,'+ com).encode('utf-8'))
-        mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug("Server :"+mensaje)
 
         if int(mensaje)==213:
@@ -68,18 +66,18 @@ class protocoloTFP(object):
     def cliente_CLOSE(self, TCPClientSocket):
         logging.debug("Enviando comando CLOSE")
         TCPClientSocket.send(str('CLOSE').encode('utf-8'))
-        mensaje = str(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+        mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug(mensaje)
     
     def server_Login(self, conn):
-        Mensaje = str(conn.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         conn.send(str('ok').encode('utf-8'))
         logging.debug(Mensaje)
-        u = str(conn.recv(bufferSize).decode('utf-8'))
+        u = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         coman, U = u.split(',')
         logging.debug('Recibiendo: '+coman+' respuesta: 231')
         conn.send(str('Server  231: necesita contraseña').encode('utf-8'))
-        p = str(conn.recv(bufferSize).decode('utf-8'))
+        p = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         coman, P = p.split(',')
         if str(U)==self.user and str(P)==self.pw:
               logging.debug('Recibiendo: ' + coman + ' respuesta: 230')
@@ -90,14 +88,14 @@ class protocoloTFP(object):
               self.sCLOSE(conn)
 
     def server_DIR(self, conn):
-        Mensaje = str(conn.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug('Recibiendo: ' +Mensaje+",Respuesta: 200")
         conn.send(str('Server: 200').encode('utf-8'))
         dir=str(ls())
         conn.send(str(dir).encode('utf-8'))
 
     def server_SET(self, conn):
-        Mensaje = str(conn.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         com,img =Mensaje.split(',')
         logging.debug('Recibiendo: '+com+",Respuesta: 200")
         fileName = "prueba/" + str(img)
@@ -111,14 +109,14 @@ class protocoloTFP(object):
             conn.send(str('501').encode('utf-8'))
 
     def server_CLOSE(self, conn):
-        Mensaje = str(conn.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         logging.debug('Recibiendo: ' +Mensaje+",Respuesta: 221")
         conn.send(str('Server: 221').encode('utf-8'))
 
     def server_Connect(self,TCPClientSocket):
         conn, addr = TCPClientSocket.accept()
         print("Conectando")
-        Mensaje = str(conn.recv(bufferSize).decode('utf-8'))
+        Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         conn.send(str('Server: 200').encode('utf-8'))
         logging.debug('Recibiendo: ' + Mensaje + ",Respuesta: 200")
         return conn
@@ -134,7 +132,7 @@ class protocoloTFP(object):
 
     def recibir_Archivo(self, TCPClientSocket):
         while True:
-            recibido = int(TCPClientSocket.recv(bufferSize).decode('utf-8'))
+            recibido = int(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
             if int(recibido)==250:
                 logging.debug("Server "+str(recibido)+" : Archivo descargado")
                 break
