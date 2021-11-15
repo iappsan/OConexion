@@ -11,8 +11,8 @@ threading.current_thread().setName("Cliente")
 HOST = '172.16.8.13'
 PORT = 21
 bufferSize = 1024
-passs='admin'
-user='user'
+passs='password'
+user='admin'
 
 TCPClientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 FTP=protocoloTFP()
