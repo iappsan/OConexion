@@ -8,7 +8,7 @@ BUFFERSIZE = 1024
 logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-2s) %(message)s',)
 
 
-def ls(ruta = 'prueba/.'):
+def ls(ruta = 'clientFile/.'):
     return [arch for arch in listdir(ruta) if isfile(join(ruta, arch))]
 
 class protocoloTFP(object):
@@ -21,11 +21,11 @@ class protocoloTFP(object):
         TCPClientSocket.send(str("Login").encode('utf-8'))
         Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
         if str(Mensaje)=='ok':
-            p = input("\nIngrese usuario: ")
+            p = input("\nUsuario: ")
             TCPClientSocket.send(str("USER," + p).encode('utf-8'))
             Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
             logging.debug(Mensaje)
-            c = input("\nIngrese Contrasena: ")
+            c = input("\nContrasena: ")
             TCPClientSocket.send(str("PASS," + c).encode('utf-8'))
             Mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
             if int(Mensaje) == 230:
@@ -51,7 +51,7 @@ class protocoloTFP(object):
         print(dir)
 
     def cliente_SET(self, TCPClientSocket):
-        com = input("\n\nArchivos disponibles:")
+        com = input("\n\nQue archivo vas a enviar?")
         logging.debug("Enviando comando SET")
         TCPClientSocket.send(str('SET,'+ com).encode('utf-8'))
         mensaje = str(TCPClientSocket.recv(BUFFERSIZE).decode('utf-8'))
@@ -98,7 +98,7 @@ class protocoloTFP(object):
         Mensaje = str(conn.recv(BUFFERSIZE).decode('utf-8'))
         com,img =Mensaje.split(',')
         logging.debug('Recibiendo: '+com+",Respuesta: 200")
-        fileName = "prueba/" + str(img)
+        fileName = "clientFile/" + str(img)
         fileObj = Path(fileName)
         if fileObj.is_file():
             logging.debug('Respuesta: 213, archivo existente')
@@ -123,8 +123,8 @@ class protocoloTFP(object):
 
 
     def enviar_Archivo(self, conn,file):
-        o='prueba/'+ file
-        d='prueba2/'+ file #IMGC
+        o='clientFile/'+ file
+        d='servFile/'+ file #IMGC
         shutil.copy(o,d)
         time.sleep(2)
         conn.send(str('250').encode('utf-8'))
